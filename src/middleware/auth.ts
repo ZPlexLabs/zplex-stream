@@ -12,7 +12,10 @@ export const authMiddleware = (secret: string) => {
             c.set("user", payload);
             await next();
         } catch (err: any) {
-            return c.text(`Unauthorized: ${err.message}`, 401);
+            return c.json(
+                { message: "Unauthorized", details: "Missing or invalid JWT" },
+                401
+            );
         }
     };
 };

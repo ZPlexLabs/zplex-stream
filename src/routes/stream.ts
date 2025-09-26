@@ -19,6 +19,12 @@ streamRouter.get("/api/stream/:fileId", async (c) => {
             headers: res.headers,
         });
     } catch (err: any) {
-        return c.text(`Error fetching file: ${err.message}`, 500);
+        return c.json(
+            {
+                message: "An error occurred",
+                details: err.message
+            },
+            500
+        );
     }
 });
