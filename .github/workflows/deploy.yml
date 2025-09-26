@@ -24,7 +24,7 @@ jobs:
         run: npm ci
 
       - name: Mask workers.dev URLs
-        run: echo "::add-mask::.workers.dev"
+        run: echo "::add-mask::${{ secrets.WORKER_SUBDOMAIN }}"
 
       - name: Deploy worker
         run: npm run deploy
