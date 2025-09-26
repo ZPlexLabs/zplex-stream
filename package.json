@@ -1,0 +1,22 @@
+{
+  "name": "zplex-stream",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev",
+    "cf-typegen": "wrangler types"
+  },
+  "dependencies": {
+    "hono": "^4.6.20",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "22.13.0",
+    "@types/service-worker-mock": "^2.0.4",
+    "@types/jsonwebtoken": "^9.0.10",
+    "typescript": "^5.9.2",
+    "wrangler": "^4.40.2"
+  }
+}

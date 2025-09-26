@@ -1,0 +1,12 @@
+{
+	"name": "zplex-stream",
+	"main": "src/index.ts",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"compatibility_date": "2025-09-26",
+	"workers_dev": true,
+	"observability": {
+		"enabled": true
+	}
+}
