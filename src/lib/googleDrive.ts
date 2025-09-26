@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { GoogleToken } from "../types/GoogleToken";
 
 export class GoogleDrive {
     constructor(private env: any) { }
@@ -7,7 +8,7 @@ export class GoogleDrive {
         return this.env.GOOGLE_DRIVE_PRIVATE_KEY_PKCS8.replace(/\\n/g, "\n").trim();
     }
 
-    private async getAccessToken(): Promise<string> {
+    private async fetchNewAccessToken(): Promise<GoogleToken> {
         const now = Math.floor(Date.now() / 1000);
 
         const payload = {
@@ -18,8 +19,7 @@ export class GoogleDrive {
             iat: now,
         };
 
-        const privateKey = this.getPrivateKey();
-        const jwtToken = jwt.sign(payload, privateKey, {
+        const jwtToken = jwt.sign(payload, this.getPrivateKey(), {
             algorithm: "RS256",
             keyid: this.env.GOOGLE_DRIVE_CLIENT_ID,
             header: { typ: "JWT", alg: "RS256" },
@@ -35,9 +35,33 @@ export class GoogleDrive {
         });
 
         if (!res.ok) throw new Error(`Google OAuth failed: ${res.status}`);
-        const data = await res.json<{ access_token: string }>();
+        const data = await res.json<{
+            access_token: string,
+            expires_in: number,
+            token_type: string
+        }>();
 
-        return data.access_token;
+        console.log("Fetched new Google Drive access token");
+        return {
+            token: data.access_token,
+            expiresAt: now + data.expires_in,
+            tokenType: data.token_type
+        };
+    }
+
+    public async getAccessToken(): Promise<string> {
+        const kvKey = "google_drive_access_token";
+        const cached = await this.env.zplex.get(kvKey, "json") as GoogleToken | null;
+        const now = Math.floor(Date.now() / 1000);
+
+        if (cached && now < cached.expiresAt - 60) {
+            console.log("Using cached Google Drive access token");
+            return cached.token;
+        }
+
+        const newToken = await this.fetchNewAccessToken();
+        await this.env.zplex.put(kvKey, JSON.stringify(newToken));
+        return newToken.token;
     }
 
     async getFileStream(fileId: string, range?: string) {

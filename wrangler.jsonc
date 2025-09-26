@@ -8,5 +8,11 @@
 	"workers_dev": true,
 	"observability": {
 		"enabled": true
-	}
+	},
+	"kv_namespaces": [
+		{
+			"binding": "zplex",
+			"id": "1158d8b0cd694f8d8fffb473c10cac23"
+		}
+	]
 }
