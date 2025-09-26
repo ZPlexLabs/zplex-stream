@@ -23,7 +23,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Deploy
+      - name: Mask workers.dev URLs
+        run: echo "::add-mask::.workers.dev"
+
+      - name: Deploy worker
         run: npm run deploy
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
